@@ -8,7 +8,7 @@ Este é um projeto de exemplo para demonstrar a implementação de um CRUD bási
 - **Express**
 - **Handlebars** (express-handlebars)
 - **Sequelize**
-- **MySQL2** (ou outro banco de dados compatível com Sequelize)
+- **MySQL2** (banco de dados compatível com Sequelize)
 - **Mocha** (Framework de Testes)
 - **Chai** (Biblioteca de Asserção)
 - **Supertest** (Teste de requisições HTTP)
