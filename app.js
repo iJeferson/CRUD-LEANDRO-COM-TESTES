@@ -10,6 +10,14 @@ app.engine('handlebars', engine({
     runtimeOptions: {
         allowProtoPropertiesByDefault: true,
         allowProtoMethodsByDefault: true,
+    },
+    helpers: {
+        ifCond: (v1, v2, options) => {
+          if (v1 === v2) {
+            return options.fn(this);
+          }
+          return options.inverse(this);
+        }
     }
 }));
 app.set('view engine', 'handlebars');
@@ -22,22 +30,41 @@ app.use(express.static('./public'));
 
 // Rota de Inicio para listar todos os produtos
 app.get('/', async (req, res) => {
-        const produtos = await Produtos.findAll();
-        res.render('home', { produtos });
-});
+    const { categoriaFiltro } = req.query;
+    let where = {};
+  
+    // Se uma categoria foi selecionada, filtra os produtos
+    if (categoriaFiltro && categoriaFiltro !== '') {
+      where = { categoria: categoriaFiltro };
+    }
+  
+    // Busca todas as categorias e produtos filtrados
+    const categorias = await Produtos.findAll({
+      attributes: ['categoria'],
+      group: ['categoria']
+    });
+  
+    const produtos = await Produtos.findAll({ where });
+  
+    res.render('home', {
+        produtos,
+        categorias: categorias.map(cat => cat.categoria),
+        categoriaSelecionada: categoriaFiltro
+      });
+  });
 
 // Rota para editar produto
 app.post('/editar/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, preco, descricao } = req.body;
+        const { nome, preco, descricao, quantidade, categoria } = req.body;
 
         // Procurar o produto pelo ID
         const produto = await Produtos.findByPk(id);
 
         // Se o produto for encontrado, atualize-o
         if (produto) {
-            await produto.update({ nome, preco, descricao });
+            await produto.update({ nome, preco, descricao, quantidade, categoria });
             res.redirect('/');
         } else {
             res.status(404).send('Produto não encontrado');
@@ -47,11 +74,34 @@ app.post('/editar/:id', async (req, res) => {
     }
 });
 
+app.post('/alterar-quantidade/:id', async (req, res) => {
+    const produtoId = req.params.id;
+    const alteracao = req.body.alteracao;
+  
+    try {
+      // Encontra o produto no banco de dados
+      const produto = await Produtos.findByPk(produtoId);
+      if (!produto) {
+        return res.json({ sucesso: false });
+      }
+  
+      // Atualiza a quantidade do produto
+      produto.quantidade += parseInt(alteracao);
+      await produto.save();
+  
+      res.json({ sucesso: true });
+    } catch (error) {
+      console.error('Erro ao atualizar a quantidade:', error);
+      res.json({ sucesso: false });
+    }
+  });
+  
+
 // Rota para criar produto
 app.post('/cadastrar', async (req, res) => {
     try {
-        const { nome, preco, descricao } = req.body;
-        await Produtos.create({ nome, preco, descricao });
+        const { nome, preco, descricao, quantidade, categoria } = req.body;
+        await Produtos.create({ nome, preco, descricao, quantidade, categoria });
         res.redirect('/');
     } catch (error) {
         res.render('cadastrar', { error: 'Ocorreu um erro ao cadastrar o produto.' });
@@ -66,7 +116,7 @@ app.post('/deletar/:id', async (req, res) => {
       await produto.destroy();
       res.redirect('/');
     }
-  });
+});
 
 app.listen(3000, () => {
     console.log('Servidor HTTP rodando em: http://localhost:3000');

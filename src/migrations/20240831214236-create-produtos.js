@@ -18,6 +18,12 @@ module.exports = {
       descricao: {
         type: Sequelize.STRING
       },
+      quantidade: {
+        type: Sequelize.INTEGER
+      },
+      categoria: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

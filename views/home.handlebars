@@ -1,10 +1,32 @@
 <div class="container mt-4">
   <h2 class="mb-4">CRUD - Produtos</h2>
   <!-- Botão para abrir o modal de cadastro -->
-  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#cadastrarProdutoModal">
-    <i class="fas fa-plus"></i> ADD Produto
+  <button
+    type="button"
+    class="btn btn-success"
+    data-toggle="modal"
+    data-target="#cadastrarProdutoModal"
+  >
+    <i class="fas fa-plus"></i>
+    ADD Produto
   </button>
   <div class="mt-4"></div>
+
+  <!-- Dropdown de filtro por categoria -->
+  <form method="GET" action="/">
+    <div class="form-group">
+      <label for="categoriaFiltro">Filtrar por Categoria</label>
+      <select class="form-control" id="categoriaFiltro" name="categoriaFiltro">
+        <option value="">Todas as Categorias</option>
+        {{#each categorias}}
+          <option value="{{this}}" {{#ifCond this ../categoriaSelecionada}}selected{{/ifCond}}>
+            {{this}}
+          </option>
+        {{/each}}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+  </form>
 
   {{#if produtos.length}}
     <table class="table table-striped table-bordered">
@@ -13,6 +35,8 @@
           <th>Nome</th>
           <th>Preço</th>
           <th>Descrição</th>
+          <th>Quantidade</th>
+          <th>Categoria</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -23,24 +47,53 @@
             <td>{{this.preco}}</td>
             <td>{{this.descricao}}</td>
             <td>
+  <button class="btn btn-secondary btn-sm" onclick="alterarQuantidade({{this.id}}, -1)">-</button>
+  <span id="quantidade-{{this.id}}">{{this.quantidade}}</span>
+  <button class="btn btn-secondary btn-sm" onclick="alterarQuantidade({{this.id}}, 1)">+</button>
+</td>
+            <td>{{this.categoria}}</td>
+            <td>
               <!-- Botão para abrir o modal de edição -->
-              <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarProdutoModal-{{this.id}}">
-                <i class="fas fa-edit"></i> Editar
+              <button
+                class="btn btn-primary btn-sm"
+                data-toggle="modal"
+                data-target="#editarProdutoModal-{{this.id}}"
+              >
+                <i class="fas fa-edit"></i>
+                Editar
               </button>
               <!-- Botão para abrir o modal de confirmação de exclusão -->
-              <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmarExcluirModal-{{this.id}}">
-                <i class="fas fa-trash"></i> Deletar
+              <button
+                class="btn btn-danger btn-sm"
+                data-toggle="modal"
+                data-target="#confirmarExcluirModal-{{this.id}}"
+              >
+                <i class="fas fa-trash"></i>
+                Deletar
               </button>
             </td>
           </tr>
 
           <!-- Modal Editar Produto -->
-          <div class="modal fade" id="editarProdutoModal-{{this.id}}" tabindex="-1" role="dialog" aria-labelledby="editarProdutoModalLabel" aria-hidden="true">
+          <div
+            class="modal fade"
+            id="editarProdutoModal-{{this.id}}"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="editarProdutoModalLabel"
+            aria-hidden="true"
+          >
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="editarProdutoModalLabel">Editar Produto</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <h5 class="modal-title" id="editarProdutoModalLabel">Editar
+                    Produto</h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
@@ -48,20 +101,68 @@
                   <div class="modal-body">
                     <div class="form-group">
                       <label for="nome">Nome do Produto</label>
-                      <input type="text" class="form-control" id="nome" name="nome" value="{{this.nome}}" required>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="nome"
+                        name="nome"
+                        value="{{this.nome}}"
+                        required
+                      />
                     </div>
                     <div class="form-group">
                       <label for="preco">Preço</label>
-                      <input type="number" class="form-control" id="preco" name="preco" step="0.01" value="{{this.preco}}" required>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="preco"
+                        name="preco"
+                        step="0.1"
+                        value="{{this.preco}}"
+                        required
+                      />
                     </div>
                     <div class="form-group">
                       <label for="descricao">Descrição</label>
-                      <textarea class="form-control" id="descricao" name="descricao" rows="3">{{this.descricao}}</textarea>
+                      <textarea
+                        class="form-control"
+                        id="descricao"
+                        name="descricao"
+                        rows="3"
+                      >{{this.descricao}}</textarea>
+                    </div>
+                    {{!-- <div class="form-group">
+                      <label for="quantidade">Quantidade</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="quantidade"
+                        name="quantidade"
+                        value="{{this.quantidade}}"
+                        required
+                      />
+                    </div> --}}
+                    <div class="form-group">
+                      <label for="categoria">Categoria</label>
+                      <input
+                        class="form-control"
+                        id="categoria"
+                        name="categoria"
+                        value="{{this.categoria}}"
+                        required
+                      />
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Atualizar</button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >Cancelar</button>
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                    >Atualizar</button>
                   </div>
                 </form>
               </div>
@@ -69,12 +170,27 @@
           </div>
 
           <!-- Modal Confirmar Exclusão -->
-          <div class="modal fade" id="confirmarExcluirModal-{{this.id}}" tabindex="-1" role="dialog" aria-labelledby="confirmarExcluirModalLabel" aria-hidden="true">
+          <div
+            class="modal fade"
+            id="confirmarExcluirModal-{{this.id}}"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="confirmarExcluirModalLabel"
+            aria-hidden="true"
+          >
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="confirmarExcluirModalLabel">Confirmar Exclusão</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <h5
+                    class="modal-title"
+                    id="confirmarExcluirModalLabel"
+                  >Confirmar Exclusão</h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
@@ -82,9 +198,20 @@
                   Tem certeza que deseja excluir o produto "{{this.nome}}"?
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                  <form action="/deletar/{{this.id}}" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-danger">Deletar</button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                  >Cancelar</button>
+                  <form
+                    action="/deletar/{{this.id}}"
+                    method="POST"
+                    style="display:inline;"
+                  >
+                    <button
+                      type="submit"
+                      class="btn btn-danger"
+                    >Deletar</button>
                   </form>
                 </div>
               </div>
@@ -102,12 +229,25 @@
 </div>
 
 <!-- Modal Cadastrar Produto -->
-<div class="modal fade" id="cadastrarProdutoModal" tabindex="-1" role="dialog" aria-labelledby="cadastrarProdutoModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="cadastrarProdutoModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="cadastrarProdutoModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="cadastrarProdutoModalLabel">Cadastrar Produto</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title" id="cadastrarProdutoModalLabel">Cadastrar
+          Produto</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -115,19 +255,64 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="nome">Nome do Produto</label>
-            <input type="text" class="form-control" id="nome" name="nome" required>
+            <input
+              type="text"
+              class="form-control"
+              id="nome"
+              name="nome"
+              value="{{this.nome}}"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="preco">Preço</label>
-            <input type="number" class="form-control" id="preco" name="preco" step="0.01" required>
+            <input
+              type="number"
+              class="form-control"
+              id="preco"
+              name="preco"
+              step="0.1"
+              value="{{this.preco}}"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="descricao">Descrição</label>
-            <textarea class="form-control" id="descricao" name="descricao" rows="3"></textarea>
+            <textarea
+              class="form-control"
+              id="descricao"
+              name="descricao"
+              rows="3"
+            >{{this.descricao}}</textarea>
+          </div>
+          <div class="form-group">
+            <label for="quantidade">Quantidade</label>
+            <input
+              type="number"
+              class="form-control"
+              id="quantidade"
+              name="quantidade"
+              value="{{this.quantidade}}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="categoria">Categoria</label>
+            <input
+              class="form-control"
+              id="categoria"
+              name="categoria"
+              value="{{this.categoria}}"
+              required
+            />
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal"
+          >Cancelar</button>
           <button type="submit" class="btn btn-success">Cadastrar</button>
         </div>
       </form>
@@ -135,8 +320,45 @@
   </div>
 </div>
 
+<script>
+  function alterarQuantidade(produtoId, alteracao) {
+    const quantidadeElemento = document.getElementById(`quantidade-${produtoId}`);
+    let quantidadeAtual = parseInt(quantidadeElemento.innerText);
+
+    // Verifica se a quantidade vai ser menor que zero
+    if (quantidadeAtual + alteracao < 0) {
+      return;
+    }
+
+    // Fazendo uma requisição POST para alterar a quantidade no servidor
+    fetch(`/alterar-quantidade/${produtoId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        alteracao: alteracao,
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.sucesso) {
+          // Atualiza a quantidade na interface
+          quantidadeElemento.innerText = quantidadeAtual + alteracao;
+        } else {
+          alert('Erro ao alterar a quantidade');
+        }
+      })
+      .catch(error => console.error('Erro:', error));
+  }
+</script>
+
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
+<script
+  src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"
+></script>
+<script
+  src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+></script>
