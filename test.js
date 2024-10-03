@@ -70,6 +70,28 @@ app.post("/cadastrar", async (req, res) => {
   }
 });
 
+app.post('/alterar-quantidade/:id', async (req, res) => {
+  const produtoId = req.params.id;
+  const alteracao = req.body.alteracao;
+
+  try {
+    // Encontra o produto no banco de dados
+    const produto = await Produtos.findByPk(produtoId);
+    if (!produto) {
+      return res.json({ sucesso: false });
+    }
+
+    // Atualiza a quantidade do produto
+    produto.quantidade += parseInt(alteracao);
+    await produto.save();
+
+    res.json({ sucesso: true });
+  } catch (error) {
+    console.error('Erro ao atualizar a quantidade:', error);
+    res.json({ sucesso: false });
+  }
+});
+
 // Rota para deletar produto
 app.post("/deletar/:id", async (req, res) => {
   const { id } = req.params;
