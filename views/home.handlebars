@@ -1,16 +1,28 @@
 <div class="container mt-4">
-  <h2 class="mb-4">CRUD - Produtos</h2>
+  <h2 class="mb-4">CRUD - Gestão de Produtos</h2>
   <!-- Botão para abrir o modal de cadastro -->
+  <div class="mt-4">
   <button
     type="button"
-    class="btn btn-success"
+    class="btn btn-success d-inline-block"
     data-toggle="modal"
     data-target="#cadastrarProdutoModal"
   >
     <i class="fas fa-plus"></i>
     ADD Produto
   </button>
-  <div class="mt-4"></div>
+
+  <button
+    type="button"
+    class="btn btn-primary d-inline-block"
+    data-toggle="modal"
+    data-target="#emitirRelatorioModal"
+  >
+    <i class="fas fa-file-alt"></i>
+    Emitir Relatório
+  </button>
+</div>
+
 
   <!-- Dropdown de filtro por categoria -->
   <form method="GET" action="/">
