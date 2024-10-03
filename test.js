@@ -30,6 +30,12 @@ app.get("/", async (req, res) => {
   res.render("home", { produtos });
 });
 
+// Rota para testar relatorio
+app.get("/relatorio", async (req, res) => {
+  const produtos = await Produtos.findAll();
+  res.render("home", { produtos });
+});
+
 // Rota para editar produto
 app.post("/editar/:id", async (req, res) => {
   try {
@@ -126,4 +132,9 @@ describe("Testes Aplicação CRUD Produtos", function () {
       })
       .catch(done);
   });
+
+  it("Deve emitir um Relatorio", function (done) {
+    request(app).get("/relatorio").expect("Content-Type", /html/).expect(200, done);
+  });
+
 });
