@@ -212,6 +212,6 @@ app.get('/relatorio', async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-    console.log('Servidor HTTP rodando em: http://localhost:3000');
+app.listen(8080, () => {
+    console.log('Servidor HTTP rodando em: http://localhost:8080');
 });
